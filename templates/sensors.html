@@ -1,0 +1,43 @@
+<html>
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="author" content="Johan Barthelemy">
+    <meta http-equiv="refresh" content="10">
+    <title>Sensors</title>
+    
+    <!-- Mobile Specific Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Font -->
+    <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/css/normalize.css">
+    <link rel="stylesheet" href="/static/css/skeleton.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/static/images/favicon.png">
+ 
+  </head>
+
+  <body>
+
+    <div class="container">
+      <div class="row">
+        <div class="two-third column" style="margin-top: 5%">
+          <h1>Playing with sensors in Woonona</h1>
+          <h2>Real time readings</h2>
+          <h3>Temperature: {{"{0:0.1f}".format(temperature)}}°C.</h1>
+          <h3>Humidity: {{"{0:0.1f}".format(humidity)}}%.</h1>
+          <h3>Heat index: {{"{0:0.1f}".format(heat_idx)}}°C.</h1>
+          <h3>Lumininosity: {{"{0:0.1f}".format(luminosity)}} lx.</h1>
+          <p>Time of reading: {{cur_time}}.</p>
+          <p>This page refreshes every 10 seconds.</p>
+          <p>Raspberry Pi 2 and Arduino powered!</p>
+        </div>
+      </div>
+    </div>
+    
+  </body>
+</html>

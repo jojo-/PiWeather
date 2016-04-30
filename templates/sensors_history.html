@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang = "en">
+  <head>
+
+    <!-- Basic informations -->
+    <meta charset="utf-8">
+    <meta name="description" content="records of readings from the Raspberri Pi 2/Arduino"
+    <meta name="author" content="Johan Barthelemy">
+    <title>Sensors - records</title>
+    
+    <!-- Mobile Specific Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Font -->
+    <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/css/normalize.css">
+    <link rel="stylesheet" href="/static/css/skeleton.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/static/images/favicon.png">
+ 
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="row">
+	<div class="one colunm" style="margin-top: 5%">
+	  <h1>Playing with sensors in Woonona</h1>
+	</div>
+      </div>
+    </div>
+    
+    <div class="container">
+      <div class="row">
+	<h2>Showing all records between two dates</h2>
+	<form id="datetime_range" action="/history" method="GET">
+	  <div class="three columns">
+	    <label for="from">From date</label>
+	    <input class="u-full-width" id="datetimepicker_from"
+		   type="text" value="{{from_date}}" name="from">
+	  </div>
+
+	  <div class="three columns">
+	    <label for="to">To date</label>
+	    <input class="u-full-width" id="datetimepicker_to"
+		   type="text" value="{{to_date}}" name="to">
+	  </div>
+
+	  <div class="two columns">
+	    <input class="button-primary" type="submit" value="Submit" style="position:relative; top: 28px"
+		   id="submit_button">
+	  </div>
+	</form>
+      </div>
+    </div>
+      
+    
+    <div class="container">
+
+      <!-- Some UI  -->
+      <div class="row">
+	<h2>Or the records of the previous...</h2>
+	<div class="eigth columns">
+	  <form id="range_select" action="/history" method="GET">
+	    <div class="two columns">
+	      <input type="radio" name="range_h" value="3" id="radio_3"/>
+	      <label for="radio_3">3 hours</label>
+	    </div>
+	    <div class="two columns">
+	      <input type="radio" name="range_h" value="6" id="radio_6"/>
+	      <label for="radio_6">6 hours</label>
+	    </div>
+	    <div class="two columns">
+	      <input type="radio" name="range_h" value="12" id="radio_12"/>
+	      <label for="radio_12">12 hours</label>
+	    </div>
+	    <div class="two columns">
+	      <input type="radio" name="range_h" value="24" id="radio_24"/>
+	      <label for="radio_24">24 hours</label>
+	    </div>
+	  </form>
+	</div>
+      </div>
+      
+      <!-- Data -->
+      <div class="row">
+        <div class="one-third column" style="margin-top: 5%">
+          
+          <h2>Temperature</h2>
+          <table class="u-full-width">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>&deg;C</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in temperatures %}
+              <tr>
+                <td>{{row[0]}}</td>
+                <td>{{"{0:0.2f}".format(row[2])}}</td>
+              <tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+          <h2>Heat index</h2>
+          <table class="u-full-width">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>&deg;C</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in heat_index %}
+              <tr>
+                <td>{{row[0]}}</td>
+                <td>{{"{0:0.2f}".format(row[2])}}</td>
+              <tr>
+              {% endfor %}
+            </tbody>
+          </table>
+    
+          <h2>Humidity</h2>
+          <table class="u-full-width">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>%</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in humidities %}
+              <tr>
+                <td>{{row[0]}}</td>
+                <td>{{"{0:0.2f}".format(row[2])}}</td>
+              <tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+          <h2>Luminosity</h2>
+          <table class="u-full-width">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>%</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in luminosities %}
+              <tr>
+                <td>{{row[0]}}</td>
+                <td>{{"{0:0.2f}".format(row[2])}}</td>
+              <tr>
+              {% endfor %}
+            </tbody>
+          </table>
+	  
+        </div>
+
+	<!-- Graphs -->
+	<div class="two-thirds column" style="margin-top: 5%">
+	  <div class="row">
+	    <div class="row">
+	      <div class="three columns">
+		<div id="chart_temperatures"></div>
+		<div id="chart_humidities"></div>
+		<div id="chart_heat_index"></div>
+		<div id="chart_luminosities"></div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+      	    
+    </div>
+    
+  </body>
+
+  <!-- Include the Javascripts for the radio buttons (jQuery) -->
+  <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+  <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+
+  <script>  
+    jQuery("#range_select input[type=radio]").click(function(){
+      jQuery("#range_select").submit();
+    });
+  </script>
+
+  
+  <!-- Include the Javascript and CSS style  for the datetimepicker -->
+  <link rel="stylesheet" type="text/css" href="/static/css/jquery.datetimepicker.css" >
+  <script src="/static/javascript/jquery.datetimepicker.full.js"></script> 
+
+  <script>
+    jQuery('#datetimepicker_from').datetimepicker(
+      {
+        format:'Y-m-d H:i',
+        defaultDate:'{{from_date}}'
+      });
+    jQuery('#datetimepicker_to').datetimepicker(
+      {
+        format:'Y-m-d H:m',
+        defaultDate:'{{to_date}}'
+      });
+  </script>
+  
+  <!-- Google Charts JS start -->
+  <script type="text/javascript"
+	  src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1','packages':['corechart']}]}"></script>
+
+  <script>
+    google.load('visualization', '1', {packages: ['corechart']});
+    google.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('datetime', 'Time');  
+      data.addColumn('number', 'Temperature');      
+      data.addRows([
+          {% for row in temperatures %} 
+            [new Date({{row[0][0:4]}},{{row[0][5:7]}}-1,{{row[0][8:10]}},{{row[0][11:13]}},{{row[0][14:16]}}),
+                      {{'%0.2f'|format(row[2])}}],
+          {% endfor %}
+        ]);
+
+      var options = {
+        width: 600,
+        height: 563,
+        legend: { position: 'bottom' },
+        hAxis: {
+          title: "Date",
+          gridlines: { count: {{temperatures_items}}, color: '#CCC' },
+          format: 'dd-MM-yyyy HH:mm' },
+        vAxis: {
+          title: "Degrees"
+        },
+        title: "Temperature",
+        curveType: "function" 
+      };
+
+      var chart = new google.visualization.LineChart(document.getElementById('chart_temperatures'));
+      chart.draw(data, options);
+    }
+  </script>
+
+  <script>
+    google.load('visualization', '1', {packages: ['corechart']});
+    google.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('datetime', 'Time');  
+      data.addColumn('number', 'Heat Index');      
+      data.addRows([
+          {% for row in heat_index %} 
+            [new Date({{row[0][0:4]}},{{row[0][5:7]}}-1,{{row[0][8:10]}},{{row[0][11:13]}},{{row[0][14:16]}}),
+                      {{'%0.2f'|format(row[2])}}],
+          {% endfor %}
+        ]);
+
+      var options = {
+        width: 600,
+        height: 563,
+        legend: { position: 'bottom' },
+        hAxis: {
+          title: "Date",
+          gridlines: { count: {{heat_index_items}}, color: '#CCC' },
+          format: 'dd-MM-yyyy HH:mm' },
+        vAxis: {
+          title: "Degrees"
+        },
+        title: "Heat index",
+        curveType: "function" 
+      };
+
+      var chart = new google.visualization.LineChart(document.getElementById('chart_heat_index'));
+      chart.draw(data, options);
+    }
+  </script>
+
+  <script>
+    google.load('visualization', '1', {packages: ['corechart']});
+    google.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('datetime', 'Time');  
+      data.addColumn('number', 'Humidity');      
+      data.addRows([
+          {% for row in humidities %} 
+            [new Date({{row[0][0:4]}},{{row[0][5:7]}}-1,{{row[0][8:10]}},{{row[0][11:13]}},{{row[0][14:16]}}),
+                      {{'%0.2f'|format(row[2])}}],
+          {% endfor %}
+        ]);
+
+      var options = {
+        width: 600,
+        height: 563,
+        legend: { position: 'bottom' },
+        hAxis: {
+          title: "Date",
+          gridlines: { count: {{humidities_items}}, color: '#CCC' },
+          format: 'dd-MM-yyyy HH:mm' },
+        vAxis: {
+          title: "Percent"
+        },
+        title: "Humidity",
+        curveType: "function" 
+      };
+
+      var chart = new google.visualization.LineChart(document.getElementById('chart_humidities'));
+      chart.draw(data, options);
+    }
+  </script>
+
+  <script>
+    google.load('visualization', '1', {packages: ['corechart']});
+    google.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+    var data = new google.visualization.DataTable();
+      data.addColumn('datetime', 'Time');  
+      data.addColumn('number', 'Luminosity');      
+      data.addRows([
+          {% for row in luminosities %} 
+            [new Date({{row[0][0:4]}},{{row[0][5:7]}}-1,{{row[0][8:10]}},{{row[0][11:13]}},{{row[0][14:16]}}),
+                      {{'%0.2f'|format(row[2])}}],
+          {% endfor %}
+        ]);
+
+      var options = {
+        width: 600,
+        height: 563,
+        legend: { position: 'bottom' },
+        hAxis: {
+          title: "Date",
+          gridlines: { count: {{luminosities_items}}, color: '#CCC' },
+          format: 'dd-MMM-yyyy HH:mm' },
+        vAxis: {
+          title: "Lux"
+        },
+        title: "Luminosity",
+        curveType: "function" 
+      };
+
+      var chart = new google.visualization.LineChart(document.getElementById('chart_luminosities'));
+      chart.draw(data, options);
+    }
+  </script>
+
+</html>
+

@@ -1,0 +1,3 @@
+- uWGSI
+- nginx
+- python with the following packages: Flask, pyserial
