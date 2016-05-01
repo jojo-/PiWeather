@@ -1,3 +1,10 @@
+# PiWeather
+
+An Arduino and Raspberry Pi simple weather station.
+
+# Requirements
+
+- Python 2.7 with the Flask and pySerial packages.
 - uWGSI
 - nginx
-- python with the following packages: Flask, pyserial
+- sqlite3
